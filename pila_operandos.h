@@ -1,7 +1,7 @@
 
 struct operandos
 {
-  int number;
+  float number;
   struct operandos *next;
 };
 
@@ -13,7 +13,7 @@ int isEmpty_op()
   return ( full_opr == NULL ) ? 1 : 0;
 }
 
-void push_op ( int operador )
+void push_op ( float operador )
 {
   stack_opr new_node = (stack_opr) malloc ( sizeof ( struct operandos ) );
   new_node -> next = isEmpty_op() ? NULL : full_opr;

@@ -22,7 +22,9 @@ void convert( char *expresion )
     if ( isNum ( aux_p -> text ) )
     {
       insert(&postfija, aux_p -> text);
+      printf("%s is num\n", aux_p -> text );
     }
+
     else
     {
       //vacia la pila con )
@@ -38,63 +40,35 @@ void convert( char *expresion )
       }
       else
       {
-        if (isEmpty() || getPriorityOf(aux_p->text) > getPriorityFull())
+        if (isEmpty())
         {
           push(aux_p->text, getPriorityOf(aux_p->text));
         }
         else
         {
-          if (getPriorityOf(aux_p->text) <getPriorityFull())
+          if ( getPriorityOf(aux_p->text) > getPriorityFull() )
           {
-            while(!isEmpty())
-            {
-              insert(&postfija, get());
-              pop();
-            }
             push(aux_p->text, getPriorityOf(aux_p->text));
           }
           else
           {
-            insert(&postfija, get());
-            pop();
-            push(aux_p->text, getPriorityOf(aux_p->text));
-          }
-        }
-        /*if (isEmpty())
-        {
-          push( aux_p->text, getPriorityOf( aux_p -> text ));
-        }
-        else
-        {
-          // si operador es menor
-          if( getPriorityOf(aux_p -> text) < getPriorityFull() )
-          {
-            push( aux_p -> text, getPriorityOf(aux_p -> text));
-            while(!isEmpty)
+            if (getPriorityOf(aux_p->text) < getPriorityFull())
             {
-              if(strcmp( get(), "(") == 0 )
+              while(!isEmpty())
               {
+                insert(&postfija, get());
                 pop();
               }
-              insert(&postfija, get());
-              pop();
-            }
-          }
-          else
-          {
-            //si el operador es igual
-            if ( getPriorityOf(aux_p -> text) == getPriorityFull())
-            {
-              insert(&postfija, get());
-              pop();
-              push( aux_p -> text, getPriorityOf(aux_p->text));
+              push(aux_p->text, getPriorityOf(aux_p->text));
             }
             else
             {
-              push( aux_p -> text, getPriorityOf(aux_p->text) );
-            }
-          }
-        }*/
+              insert(&postfija, get());
+              pop();
+              push(aux_p->text, getPriorityOf(aux_p->text));
+            }  
+          } 
+        }
       }
     }
   }
@@ -105,8 +79,8 @@ void convert( char *expresion )
     pop();
   }
 
-  //print(infija);
-  //print(postfija);
+  print(infija);
+  print(postfija);
 
   // results
   int res = 0;
@@ -114,29 +88,29 @@ void convert( char *expresion )
   {
     if (isNum(aux_res->text))
     {
-      int z = atoi(aux_res->text);
+      float z = atof(aux_res->text);
       push_op(z);
     }
     else
     {
       if (strcmp(aux_res->text, "+") == 0 )
       {
-        int b =  get_op();
+        float b =  get_op();
         pop_op();
-        int a = get_op();
+        float a = get_op();
         pop_op();
-        int c = a + b;
+        float c = a + b;
         push_op( c );
       }
       else
       {
         if(strcmp(aux_res->text, "-") == 0)
         {
-          int b =  get_op();
+          float b =  get_op();
           pop_op();
-          int a = get_op();
+          float a = get_op();
           pop_op();
-          int c = a - b;
+          float c = a - b;
           push_op( c );
 
         }
@@ -144,21 +118,33 @@ void convert( char *expresion )
         {
           if(strcmp(aux_res->text, "/") == 0)
           {
-              int b =  get_op();
+              float b =  get_op();
               pop_op();
-              int a = get_op();
+              float a = get_op();
               pop_op();
-              int c = a / b;
+              float c = a / b;
               push_op( c );
           }
           else
           {
-              int b =  get_op();
+            if(strcmp(aux_res->text, "*") == 0)
+            {
+                float b =  get_op();
+                pop_op();
+                float a = get_op();
+                pop_op();
+                float c = a * b;
+                push_op( c );
+            }
+            else
+            {
+              float b =  get_op();
               pop_op();
-              int a = get_op();
+              float a = get_op();
               pop_op();
-              int c = a * b;
+              float c = pow(a, b);
               push_op( c );
+            }
           }
         }
       }
@@ -173,15 +159,19 @@ void convert( char *expresion )
 
 /* Regresa la prioridad del operador op */
 int getPriorityOf( char *op ){
-  if( strstr("*/", op ) != NULL ) return 2; 
-  if( strstr("+-", op ) != NULL ) return 1; 
-  if( strstr("(", op ) != NULL )  return 0; 
+  if( strcmp( op, "^" ) == 0 ) return 3;
+  if( strcmp( op, "*" ) == 0 ) return 2;
+  if( strcmp( op, "/" ) == 0 ) return 2;
+  if( strcmp( op, "+" ) == 0 ) return 1;
+  if( strcmp( op, "-" ) == 0 ) return 1;
+  if( strcmp( op, "(" ) == 0 ) return 0;
+  if( strcmp( op, ")" ) == 0 ) return 0;
   return -1;
 }
 
 /* Regresa verdadero si la cadena n es un numero entero o flotante */
 int isNum( char *n ){
-  if( strcmp( n, "+" ) != 0 && strcmp( n, "-" ) != 0 && strcmp( n, "/" ) != 0 && strcmp( n, "*" ) != 0 && strcmp( n, "(" ) != 0 && strcmp( n, ")" ) != 0 ){
+  if( strcmp( n, "+" ) != 0 && strcmp( n, ")" ) != 0 && strcmp( n, "-" ) != 0 && strcmp( n, "/" ) != 0 && strcmp( n, "*" ) != 0 && strcmp( n, "^" ) != 0 && strcmp( n, "(" ) != 0 ){
     return 1;
   }else{
     return 0;
